@@ -1,3 +1,14 @@
+"""
+title: Enhance Image
+author: Patrick Williams
+author_url: https://reticulated.net/
+git_url: https://github.com/pwillia7/open-webui-comfyui-imageprompt
+description: A toolkit that enhances an image by converting it to a base64 string and using it as a prompt for AI-based enhancement.
+required_open_webui_version: 0.5.3
+requirements: Pillow
+version: 2.2
+licence: MIT
+"""
 from pydantic import BaseModel
 import base64
 import urllib.request
