@@ -1,30 +1,17 @@
-"""
-title: Enhance Image
-author: Patrick Williams
-author_url: https://reticulated.net/
-git_url: https://github.com/pwillia7/open-webui-comfyui-imageprompt
-description: A toolkit that enhances an image by converting it to a base64 string and using it as a prompt for AI-based enhancement.
-required_open_webui_version: 0.5.3
-requirements: Pillow
-version: 2.1
-licence: MIT
-"""
-
 from pydantic import BaseModel
 import base64
 import urllib.request
+import ssl
 from io import BytesIO
 from PIL import Image
 from fastapi import HTTPException, Request
 from open_webui.routers.images import GenerateImageForm, image_generations
-
 
 class User(BaseModel):
     id: str
     email: str
     name: str
     role: str
-
 
 class Tools:
     def __init__(self):
@@ -97,8 +84,18 @@ class Tools:
                     )
                 return "Invalid URL. Please provide a valid image URL starting with http:// or https://."
 
+            # Define a user-agent header
+            user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
+            headers = {"User-Agent": user_agent}
+
+            # Create a request object
+            request = urllib.request.Request(image_url, headers=headers)
+
+            # Create an SSL context to handle HTTPS requests
+            ssl_context = ssl.create_default_context()
+
             # Fetch the image from the URL
-            with urllib.request.urlopen(image_url) as response:
+            with urllib.request.urlopen(request, context=ssl_context, timeout=10) as response:
                 image_data = response.read()
 
             # Convert the image to base64
